@@ -2,6 +2,7 @@ package com.Enotes_Api_Service.Enotes_Api.service.Iml;
 
 import com.Enotes_Api_Service.Enotes_Api.dto.CategoryDto;
 import com.Enotes_Api_Service.Enotes_Api.entity.Category;
+import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.repository.CategoryRepository;
 import com.Enotes_Api_Service.Enotes_Api.response.CategoryResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.CategoryService;
@@ -76,10 +77,11 @@ public class CategoryServiceIml implements CategoryService {
     }
 
     @Override
-    public CategoryDto getCategoryById(Integer id) {
-        Optional<Category> cate = categoryRepository.findByIdAndIsDeletedFalse(id);
-        if(cate.isPresent()) {
-            return modelMapper.map(cate.get(), CategoryDto.class);
+    public CategoryDto getCategoryById(Integer id) throws ResourceNotfoundException {
+        Category cate = categoryRepository.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(()->new ResourceNotfoundException("Category not found with id "+id));
+        if(!ObjectUtils.isEmpty(cate)) {
+            return modelMapper.map(cate, CategoryDto.class);
         }
         return null;
     }
