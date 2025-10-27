@@ -7,7 +7,7 @@ import com.Enotes_Api_Service.Enotes_Api.response.CategoryResponse;
 import java.util.List;
 
 public interface CategoryService {
-    public Category saveCategory(CategoryDto category);
+    public Boolean saveCategory(CategoryDto category);
     public List<Category> getAllCategory();
 
     List<CategoryResponse> getActiveCategory();

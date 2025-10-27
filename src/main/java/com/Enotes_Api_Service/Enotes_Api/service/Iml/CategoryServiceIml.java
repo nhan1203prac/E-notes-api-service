@@ -12,7 +12,6 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,18 +27,35 @@ public class CategoryServiceIml implements CategoryService {
     private CategoryService categoryService;
 
     @Override
-    public Category saveCategory(CategoryDto categoryDto) {
-//        Category category = new Category();
-//        category.setName(categoryDto.getName());
-//        category.setDescription(categoryDto.getDescription());
-//        category.setIsAvtive(categoryDto.getIsActive());
-
+    public Boolean saveCategory(CategoryDto categoryDto) {
         Category category = modelMapper.map(categoryDto, Category.class);
-        category.setIsDeleted(false);
-        category.setCreatedOn(LocalDateTime.now());
-        category.setCreatedBy(1);
+        if(ObjectUtils.isEmpty(categoryDto.getId())){
+            category.setIsDeleted(false);
+            category.setCreatedOn(LocalDateTime.now());
+            category.setCreatedBy(1);
 
-        return categoryRepository.save(category);
+        }else{
+            updateCategory(category);
+        }
+        Category savedCategory = categoryRepository.save(category);
+        if(ObjectUtils.isEmpty(savedCategory)){
+            return false;
+        }
+
+        return true;
+    }
+
+    private void updateCategory(Category category) {
+        Optional<Category> existCategory = categoryRepository.findById(category.getId());
+        if(existCategory.isPresent()){
+            Category existingCategory = existCategory.get();
+
+            category.setCreatedBy(existingCategory.getCreatedBy());
+            category.setCreatedOn(existingCategory.getCreatedOn());
+            category.setUpdatedOn(LocalDateTime.now());
+            category.setUpdatedBy(1);
+            category.setIsDeleted(existingCategory.getIsDeleted());
+        }
     }
 
     @Override
