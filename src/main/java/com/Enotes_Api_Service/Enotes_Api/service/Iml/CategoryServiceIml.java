@@ -13,6 +13,7 @@ import org.springframework.util.ObjectUtils;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +22,10 @@ public class CategoryServiceIml implements CategoryService {
     private CategoryRepository categoryRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper mapper;
+    @Autowired
+    private CategoryService categoryService;
 
     @Override
     public Category saveCategory(CategoryDto categoryDto) {
@@ -48,9 +53,31 @@ public class CategoryServiceIml implements CategoryService {
 
     @Override
     public List<CategoryResponse> getActiveCategory() {
-        List<Category> categoryList = categoryRepository.findByIsActiveTrue();
+        List<Category> categoryList = categoryRepository.findByIsActiveTrueAndIsDeletedFalse();
         return categoryList.stream()
                 .map(cat -> modelMapper.map(cat, CategoryResponse.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CategoryDto getCategoryById(Integer id) {
+        Optional<Category> cate = categoryRepository.findByIdAndIsDeletedFalse(id);
+        if(cate.isPresent()) {
+            return modelMapper.map(cate.get(), CategoryDto.class);
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean deleteCategoryById(Integer id) {
+        Optional<Category> optionalCategory = categoryRepository.findById(id);
+        if(optionalCategory.isPresent()) {
+            Category category = optionalCategory.get();
+            category.setIsDeleted(true);
+            category.setUpdatedOn(LocalDateTime.now());
+            categoryRepository.save(category);
+            return true;
+        }
+        return false;
     }
 }
