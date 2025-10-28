@@ -1,8 +1,10 @@
 package com.Enotes_Api_Service.Enotes_Api.service.Iml;
 
+import com.Enotes_Api_Service.Enotes_Api.Utils.Validation;
 import com.Enotes_Api_Service.Enotes_Api.dto.CategoryDto;
 import com.Enotes_Api_Service.Enotes_Api.entity.Category;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
+import com.Enotes_Api_Service.Enotes_Api.exception.ValidationException;
 import com.Enotes_Api_Service.Enotes_Api.repository.CategoryRepository;
 import com.Enotes_Api_Service.Enotes_Api.response.CategoryResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.CategoryService;
@@ -23,12 +25,14 @@ public class CategoryServiceIml implements CategoryService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private ModelMapper mapper;
-    @Autowired
-    private CategoryService categoryService;
+    private Validation validation;
+
 
     @Override
     public Boolean saveCategory(CategoryDto categoryDto) {
+//        validation field
+        validation.categoryValidation(categoryDto);
+
         Category category = modelMapper.map(categoryDto, Category.class);
         if(ObjectUtils.isEmpty(categoryDto.getId())){
             category.setIsDeleted(false);
