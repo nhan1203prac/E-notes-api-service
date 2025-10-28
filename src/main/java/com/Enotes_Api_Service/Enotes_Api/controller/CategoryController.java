@@ -2,8 +2,10 @@ package com.Enotes_Api_Service.Enotes_Api.controller;
 
 import com.Enotes_Api_Service.Enotes_Api.dto.CategoryDto;
 import com.Enotes_Api_Service.Enotes_Api.entity.Category;
+import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.response.CategoryResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto category) {
+    public ResponseEntity<?> saveCategory(@Valid @RequestBody CategoryDto category) {
         Boolean saveCategory = categoryService.saveCategory(category);
         if (saveCategory) {
             return new ResponseEntity<>(saveCategory, HttpStatus.CREATED);
@@ -52,7 +54,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getCategoryDetailById(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> getCategoryDetailById(@PathVariable("id") Integer id) throws ResourceNotfoundException {
         CategoryDto response = categoryService.getCategoryById(id);
         if(ObjectUtils.isEmpty(response)){
             return new ResponseEntity<>("Category not found with id "+id,HttpStatus.NOT_FOUND);
