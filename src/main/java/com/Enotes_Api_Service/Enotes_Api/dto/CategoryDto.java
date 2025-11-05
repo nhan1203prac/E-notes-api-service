@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 public class CategoryDto {
     Integer id;
 
-    @NotBlank
-    @Size(min = 4, max = 100,message = "Field name must be between 4 and 100 characters")
+//    @NotBlank
+//    @Size(min = 4, max = 100,message = "Field name must be between 4 and 100 characters")
     String name;
 
-    @NotBlank
-    @Size(min = 4, max = 100, message = "Field description must be between 4 and 100 characters")
+//    @NotBlank
+//    @Size(min = 4, max = 100, message = "Field description must be between 4 and 100 characters")
     String description;
 
-    @NotNull
+//    @NotNull
     Boolean isActive;
     Integer createdBy;
     LocalDateTime createdOn;
