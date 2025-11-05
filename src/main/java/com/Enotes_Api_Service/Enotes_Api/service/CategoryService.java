@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CategoryService {
     public Boolean saveCategory(CategoryDto category);
-    public List<Category> getAllCategory();
+    public List<CategoryDto> getAllCategory();
 
     List<CategoryResponse> getActiveCategory();
 

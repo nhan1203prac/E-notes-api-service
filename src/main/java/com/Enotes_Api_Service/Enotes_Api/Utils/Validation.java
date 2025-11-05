@@ -22,7 +22,7 @@ public class Validation {
                 if(categoryDto.getName().length() > 100) {
                     errors.put("name", "name field should not be longer than 100 characters");
                 }
-                if(categoryDto.getName().length() < 10) {
+                if(categoryDto.getName().length() < 3) {
                     errors.put("name", "name field should not be shorter than 10 characters");
                 }
             }

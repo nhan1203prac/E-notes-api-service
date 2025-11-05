@@ -3,6 +3,7 @@ package com.Enotes_Api_Service.Enotes_Api.service.Iml;
 import com.Enotes_Api_Service.Enotes_Api.Utils.Validation;
 import com.Enotes_Api_Service.Enotes_Api.dto.CategoryDto;
 import com.Enotes_Api_Service.Enotes_Api.entity.Category;
+import com.Enotes_Api_Service.Enotes_Api.exception.ExistDataException;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.exception.ValidationException;
 import com.Enotes_Api_Service.Enotes_Api.repository.CategoryRepository;
@@ -32,11 +33,15 @@ public class CategoryServiceIml implements CategoryService {
     public Boolean saveCategory(CategoryDto categoryDto) {
 //        validation field
         validation.categoryValidation(categoryDto);
-
+//        Check exist
+        boolean isExist = categoryRepository.existsByName(categoryDto.getName());
+        if(isExist){
+            throw new ExistDataException("Category already exists");
+        }
         Category category = modelMapper.map(categoryDto, Category.class);
         if(ObjectUtils.isEmpty(categoryDto.getId())){
             category.setIsDeleted(false);
-            category.setCreatedOn(LocalDateTime.now());
+//            category.setCreatedOn(LocalDateTime.now());
 //            category.setCreatedBy(1);
 
         }else{
@@ -64,12 +69,12 @@ public class CategoryServiceIml implements CategoryService {
     }
 
     @Override
-    public List<Category> getAllCategory() {
+    public List<CategoryDto> getAllCategory() {
         List<Category> categoryList = categoryRepository.findAll();
         List<CategoryDto> listDto = categoryList.stream()
                 .map(cat->modelMapper.map(cat, CategoryDto.class))
                 .collect(Collectors.toList());
-        return categoryList;
+        return listDto;
     }
 
     @Override

@@ -1,8 +1,10 @@
 package com.Enotes_Api_Service.Enotes_Api.exception;
 
+import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,19 +20,23 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> exception(Exception ex){
+    public ResponseEntity<?> exception(Exception ex){
         log.error("GlobalExceptionHandler :: handleException ::", ex.getMessage());
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<?> handleNullPointerException(NullPointerException e){
         log.error("GlobalExceptionHandler :: handleNullPointerException ::", e.getMessage());
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+//    custom exception
     @ExceptionHandler(ResourceNotfoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(ResourceNotfoundException e){
         log.error("GlobalExceptionHandler :: handleResourceNotFoundException ::", e.getMessage());
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 //    @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -48,6 +54,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<?> handleValidationException(ValidationException e){
         log.error("GlobalExceptionHandler :: handleValidationException ::", e.getMessage());
-        return new ResponseEntity<>(e.getErrors(), HttpStatus.BAD_REQUEST);
+//        return new ResponseEntity<>(e.getErrors(), HttpStatus.BAD_REQUEST);
+        return CommonUtil.createErrorResponse(e.getErrors(), HttpStatus.BAD_REQUEST);
     }
+//    check data exist
+    @ExceptionHandler(ExistDataException.class)
+    public ResponseEntity<?> handleExistDataException(ExistDataException e){
+        log.error("GlobalExceptionHandler :: handleExistDataException ::", e.getMessage());
+//        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.CONFLICT);
+    }
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
+        log.error("GlobalExceptionHandler :: handleHttpMessageNotReadable ::", e.getMessage());
+//        Map<String, String> errors = new LinkedHashMap<>();
+//        errors.put("error", "Invalid input format: " + e.getMostSpecificCause().getMessage());
+//        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }

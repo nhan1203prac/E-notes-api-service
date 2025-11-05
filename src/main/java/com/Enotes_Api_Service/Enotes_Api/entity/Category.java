@@ -19,7 +19,7 @@ public class Category extends BaseModel {
     Integer id;
     String name;
     String description;
-    Boolean isAvtive;
+    Boolean isActive;
     Boolean isDeleted;
 
 
