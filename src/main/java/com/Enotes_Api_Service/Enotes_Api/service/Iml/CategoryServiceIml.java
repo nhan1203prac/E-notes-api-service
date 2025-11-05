@@ -37,7 +37,7 @@ public class CategoryServiceIml implements CategoryService {
         if(ObjectUtils.isEmpty(categoryDto.getId())){
             category.setIsDeleted(false);
             category.setCreatedOn(LocalDateTime.now());
-            category.setCreatedBy(1);
+//            category.setCreatedBy(1);
 
         }else{
             updateCategory(category);
@@ -58,7 +58,7 @@ public class CategoryServiceIml implements CategoryService {
             category.setCreatedBy(existingCategory.getCreatedBy());
             category.setCreatedOn(existingCategory.getCreatedOn());
             category.setUpdatedOn(LocalDateTime.now());
-            category.setUpdatedBy(1);
+//            category.setUpdatedBy(1);
             category.setIsDeleted(existingCategory.getIsDeleted());
         }
     }
