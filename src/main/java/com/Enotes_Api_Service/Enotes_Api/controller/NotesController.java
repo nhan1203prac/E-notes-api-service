@@ -1,11 +1,13 @@
 package com.Enotes_Api_Service.Enotes_Api.controller;
 
 import com.Enotes_Api_Service.Enotes_Api.dto.NotesDto;
+import com.Enotes_Api_Service.Enotes_Api.entity.FileDetails;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
 import com.Enotes_Api_Service.Enotes_Api.service.NotesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -30,6 +32,15 @@ public class NotesController {
         return CommonUtil.createErrorResponseMessage("Notes not saved", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @GetMapping("/dowload/{id}")
+    public ResponseEntity<?> dowloadFile(@PathVariable Integer id) throws ResourceNotfoundException, IOException {
+        FileDetails fileDetails = notesService.getFileDetails(id);
+        byte[] dowloadFile = notesService.dowloadFile(fileDetails);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(CommonUtil.getContentType(fileDetails.getOriginalFileName()));
+        headers.setContentDispositionFormData("attachment", fileDetails.getOriginalFileName());
+        return ResponseEntity.ok().headers(headers).body(dowloadFile);
+    }
     @GetMapping("/")
     public ResponseEntity<?> getAllNotes() {
         List<NotesDto>  notes = notesService.getAllNotes();

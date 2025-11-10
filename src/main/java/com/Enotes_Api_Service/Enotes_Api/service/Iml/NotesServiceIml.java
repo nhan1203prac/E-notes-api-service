@@ -18,10 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -124,5 +124,18 @@ public class NotesServiceIml implements NotesService {
     @Override
     public List<NotesDto> getAllNotes() {
         return notesRepository.findAll().stream().map(note->modelMapper.map(note, NotesDto.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public FileDetails getFileDetails(Integer id) throws ResourceNotfoundException {
+        FileDetails fileDetails = fileRepository.findById(id).orElseThrow(()->new ResourceNotfoundException("File is not available"));
+
+        return fileDetails;
+    }
+
+    @Override
+    public byte[] dowloadFile(FileDetails fileDetails) throws IOException {
+        InputStream io = new FileInputStream(fileDetails.getPath());
+        return StreamUtils.copyToByteArray(io);
     }
 }
