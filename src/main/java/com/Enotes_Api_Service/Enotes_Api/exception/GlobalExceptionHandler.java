@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.FileNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,13 @@ public class GlobalExceptionHandler {
 //        errors.put("error", "Invalid input format: " + e.getMostSpecificCause().getMessage());
 //        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<?> handleFileNotFoundException(FileNotFoundException e){
+        log.error("GlobalExceptionHandler :: handleFileNotFoundException ::", e.getMessage());
+//        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        return CommonUtil.createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 }
