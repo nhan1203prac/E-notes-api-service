@@ -7,22 +7,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Notes extends BaseModel{
-
+@Entity
+public class FileDetails extends BaseModel{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String title;
-    private String description;
-
-    @ManyToOne
-    private Category category;
-    @ManyToOne
-    private FileDetails fileDetails;
+    private String uploadFileName;
+    private String originalFileName;
+    private String displayFileName;
+    private String path;
+    private Long fileSize;
 }
