@@ -8,6 +8,7 @@ import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.repository.CategoryRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.FileRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.NotesRepository;
+import com.Enotes_Api_Service.Enotes_Api.response.NotesResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.NotesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
@@ -137,5 +141,26 @@ public class NotesServiceIml implements NotesService {
     public byte[] dowloadFile(FileDetails fileDetails) throws IOException {
         InputStream io = new FileInputStream(fileDetails.getPath());
         return StreamUtils.copyToByteArray(io);
+    }
+
+    @Override
+    public NotesResponse getAllNotesByUser(Integer id, Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Notes> notes = notesRepository.findByCreatedBy(id, pageable);
+        List<NotesDto> notesDtos = notes.getContent()
+                .stream()
+                .map(note -> modelMapper.map(note, NotesDto.class))
+                .collect(Collectors.toList());
+
+        NotesResponse notesResponse = NotesResponse.builder()
+                .notes(notesDtos)
+                .pageNo(notes.getNumber())
+                .pageSize(notes.getSize())
+                .totalElements(notes.getTotalElements())
+                .totalPages(notes.getTotalPages())
+                .isFirst(notes.isFirst())
+                .isLast(notes.isLast())
+                .build();
+        return notesResponse;
     }
 }

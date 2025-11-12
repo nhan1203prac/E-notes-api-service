@@ -4,6 +4,7 @@ import com.Enotes_Api_Service.Enotes_Api.dto.NotesDto;
 import com.Enotes_Api_Service.Enotes_Api.entity.FileDetails;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
+import com.Enotes_Api_Service.Enotes_Api.response.NotesResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.NotesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,4 +51,17 @@ public class NotesController {
         return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
     }
 
+    @GetMapping("/user-notes")
+    public ResponseEntity<?> getUserNotes(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
+                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+        Integer userId = 1;
+        NotesResponse notesResponse = notesService.getAllNotesByUser(userId, pageNo, pageSize);
+//        if(CollectionUtils.isEmpty(notesResponse.getNotes())) {
+//            return ResponseEntity.noContent().build();
+//        }
+//        else{
+//
+//        }
+        return CommonUtil.createBuildResponse(notesResponse, HttpStatus.OK);
+    }
 }
