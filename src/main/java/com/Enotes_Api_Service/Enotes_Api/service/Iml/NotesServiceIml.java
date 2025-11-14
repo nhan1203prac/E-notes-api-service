@@ -51,21 +51,35 @@ public class NotesServiceIml implements NotesService {
     public Boolean createNote(String note, MultipartFile file) throws ResourceNotfoundException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         NotesDto notesDto = objectMapper.readValue(note, NotesDto.class);
+
+        if(!ObjectUtils.isEmpty(notesDto.getId())){
+            updatesNodes(notesDto,file);
+        }
         log.info("Uploading file: {}", notesDto);
         checkCategoryExist(notesDto.getCategory());
         Notes notes = modelMapper.map(notesDto, Notes.class);
-        log.info("Uploading file2: {}", notes);
+        log.info("Uploading file2: {}", notes.getFileDetails().getPath());
         FileDetails fileDetails = saveFileDetails(file);
         if(!ObjectUtils.isEmpty(fileDetails)) {
             notes.setFileDetails(fileDetails);
         }else{
-            notes.setFileDetails(null);
+            if (ObjectUtils.isEmpty(notesDto.getId())) {
+                notes.setFileDetails(null);
+            }
         }
         Notes savedNote = notesRepository.save(notes);
         if(!ObjectUtils.isEmpty(savedNote)){
             return true;
         }
         return false;
+    }
+
+    private void updatesNodes(NotesDto notesDto, MultipartFile file) throws ResourceNotfoundException {
+        Notes existNotes = notesRepository.findById(notesDto.getId()).orElseThrow(()-> new ResourceNotfoundException("Invalid notes Id"));
+        if(ObjectUtils.isEmpty(file)){
+            notesDto.setFile(modelMapper.map(existNotes.getFileDetails(), NotesDto.FileDto.class));
+
+        }
     }
 
     private FileDetails saveFileDetails(MultipartFile file) throws IOException {
