@@ -8,6 +8,7 @@ import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.repository.CategoryRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.FileRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.NotesRepository;
+import com.Enotes_Api_Service.Enotes_Api.response.NotesResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.NotesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
@@ -47,21 +51,35 @@ public class NotesServiceIml implements NotesService {
     public Boolean createNote(String note, MultipartFile file) throws ResourceNotfoundException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         NotesDto notesDto = objectMapper.readValue(note, NotesDto.class);
+
+        if(!ObjectUtils.isEmpty(notesDto.getId())){
+            updatesNodes(notesDto,file);
+        }
         log.info("Uploading file: {}", notesDto);
         checkCategoryExist(notesDto.getCategory());
         Notes notes = modelMapper.map(notesDto, Notes.class);
-        log.info("Uploading file2: {}", notes);
+        log.info("Uploading file2: {}", notes.getFileDetails().getPath());
         FileDetails fileDetails = saveFileDetails(file);
         if(!ObjectUtils.isEmpty(fileDetails)) {
             notes.setFileDetails(fileDetails);
         }else{
-            notes.setFileDetails(null);
+            if (ObjectUtils.isEmpty(notesDto.getId())) {
+                notes.setFileDetails(null);
+            }
         }
         Notes savedNote = notesRepository.save(notes);
         if(!ObjectUtils.isEmpty(savedNote)){
             return true;
         }
         return false;
+    }
+
+    private void updatesNodes(NotesDto notesDto, MultipartFile file) throws ResourceNotfoundException {
+        Notes existNotes = notesRepository.findById(notesDto.getId()).orElseThrow(()-> new ResourceNotfoundException("Invalid notes Id"));
+        if(ObjectUtils.isEmpty(file)){
+            notesDto.setFile(modelMapper.map(existNotes.getFileDetails(), NotesDto.FileDto.class));
+
+        }
     }
 
     private FileDetails saveFileDetails(MultipartFile file) throws IOException {
@@ -137,5 +155,26 @@ public class NotesServiceIml implements NotesService {
     public byte[] dowloadFile(FileDetails fileDetails) throws IOException {
         InputStream io = new FileInputStream(fileDetails.getPath());
         return StreamUtils.copyToByteArray(io);
+    }
+
+    @Override
+    public NotesResponse getAllNotesByUser(Integer id, Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Notes> notes = notesRepository.findByCreatedBy(id, pageable);
+        List<NotesDto> notesDtos = notes.getContent()
+                .stream()
+                .map(note -> modelMapper.map(note, NotesDto.class))
+                .collect(Collectors.toList());
+
+        NotesResponse notesResponse = NotesResponse.builder()
+                .notes(notesDtos)
+                .pageNo(notes.getNumber())
+                .pageSize(notes.getSize())
+                .totalElements(notes.getTotalElements())
+                .totalPages(notes.getTotalPages())
+                .isFirst(notes.isFirst())
+                .isLast(notes.isLast())
+                .build();
+        return notesResponse;
     }
 }
