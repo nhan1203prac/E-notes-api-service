@@ -28,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -51,6 +52,9 @@ public class NotesServiceIml implements NotesService {
     public Boolean createNote(String note, MultipartFile file) throws ResourceNotfoundException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         NotesDto notesDto = objectMapper.readValue(note, NotesDto.class);
+
+        notesDto.setIsDeleted(false);
+        notesDto.setDeletedOn(null);
 
         if(!ObjectUtils.isEmpty(notesDto.getId())){
             updatesNodes(notesDto,file);
@@ -160,7 +164,7 @@ public class NotesServiceIml implements NotesService {
     @Override
     public NotesResponse getAllNotesByUser(Integer id, Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        Page<Notes> notes = notesRepository.findByCreatedBy(id, pageable);
+        Page<Notes> notes = notesRepository.findByCreatedByAndIsDeletedFalse(id, pageable);
         List<NotesDto> notesDtos = notes.getContent()
                 .stream()
                 .map(note -> modelMapper.map(note, NotesDto.class))
@@ -177,4 +181,28 @@ public class NotesServiceIml implements NotesService {
                 .build();
         return notesResponse;
     }
+
+    @Override
+    public void softDeleteNotes(Integer id) throws ResourceNotfoundException {
+        Notes existNotes = notesRepository.findById(id).orElseThrow(()->new ResourceNotfoundException("Notes id invalid! Not found"));
+        existNotes.setIsDeleted(true);
+        existNotes.setDeletedOn(Instant.now());
+        notesRepository.save(existNotes);
+    }
+
+    @Override
+    public void restoreNotes(Integer id) throws ResourceNotfoundException {
+        Notes existNotes = notesRepository.findById(id).orElseThrow(()->new ResourceNotfoundException("Notes id invalid! Not found"));
+        existNotes.setIsDeleted(false);
+        existNotes.setDeletedOn(null);
+        notesRepository.save(existNotes);
+    }
+
+    @Override
+    public List<NotesDto> getUserRecycleBinNotes(Integer userId) {
+        List<Notes> notes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
+        List<NotesDto> notesDto = notes.stream().map(note->modelMapper.map(note, NotesDto.class)).collect(Collectors.toList());
+        return notesDto;
+    }
+
 }

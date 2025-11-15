@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,4 +27,6 @@ public class Notes extends BaseModel{
     private Category category;
     @ManyToOne
     private FileDetails fileDetails;
+    private Boolean isDeleted = false;
+    private Instant deletedOn;
 }
