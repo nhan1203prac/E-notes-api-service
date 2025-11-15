@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.Instant;
 import java.util.List;
 
 public interface NotesRepository extends JpaRepository<Notes, Integer> {
@@ -13,4 +14,6 @@ public interface NotesRepository extends JpaRepository<Notes, Integer> {
 
     Page<Notes> findByCreatedByAndIsDeletedFalse(Integer createdBy, Pageable pageable);
     List<Notes> findByCreatedByAndIsDeletedTrue(Integer createdBy);
+
+    List<Notes> findAllByIsDeletedAndDeletedOnBefore(boolean b, Instant cutOffDate);
 }

@@ -87,5 +87,18 @@ public class NotesController {
         }
         return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
     }
+
+    @DeleteMapping("/hard-delete/{id}")
+    public ResponseEntity<?> hardDeleteNote(@PathVariable Integer id) throws ResourceNotfoundException {
+        notesService.hardDeleteNotes(id);
+        return CommonUtil.createBuildResponseMessage("Note deleted successfully", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-recycle/{id}")
+    public ResponseEntity<?> emptyRecyclebin() throws ResourceNotfoundException {
+        Integer userId = 1;
+        notesService.emptyRecycleBin(userId);
+        return CommonUtil.createBuildResponseMessage("Note deleted successfully", HttpStatus.OK);
+    }
 }
 

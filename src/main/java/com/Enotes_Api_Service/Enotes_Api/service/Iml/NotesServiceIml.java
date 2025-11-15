@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -203,6 +204,25 @@ public class NotesServiceIml implements NotesService {
         List<Notes> notes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
         List<NotesDto> notesDto = notes.stream().map(note->modelMapper.map(note, NotesDto.class)).collect(Collectors.toList());
         return notesDto;
+    }
+
+    @Override
+    public void hardDeleteNotes(Integer id) throws ResourceNotfoundException {
+        Notes existNotes = notesRepository.findById(id).orElseThrow(()->new ResourceNotfoundException("Notes id invalid! Not found"));
+        if(existNotes.getIsDeleted()){
+            notesRepository.delete(existNotes);
+        }else{
+            throw new ResourceNotfoundException("Sorry You can't hard delete this note");
+        }
+    }
+
+    @Override
+    public void emptyRecycleBin(Integer userId) {
+        List<Notes> recycleNotes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
+
+        if(!CollectionUtils.isEmpty(recycleNotes)){
+            notesRepository.deleteAll(recycleNotes);
+        }
     }
 
 }
