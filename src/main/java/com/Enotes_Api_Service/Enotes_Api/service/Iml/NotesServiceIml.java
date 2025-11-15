@@ -1,16 +1,17 @@
 package com.Enotes_Api_Service.Enotes_Api.service.Iml;
 
-import com.Enotes_Api_Service.Enotes_Api.dto.CategoryDto;
+import com.Enotes_Api_Service.Enotes_Api.dto.FavouriteNoteDto;
 import com.Enotes_Api_Service.Enotes_Api.dto.NotesDto;
+import com.Enotes_Api_Service.Enotes_Api.entity.FavouriteNote;
 import com.Enotes_Api_Service.Enotes_Api.entity.FileDetails;
 import com.Enotes_Api_Service.Enotes_Api.entity.Notes;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.repository.CategoryRepository;
+import com.Enotes_Api_Service.Enotes_Api.repository.FavouriteNodeRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.FileRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.NotesRepository;
 import com.Enotes_Api_Service.Enotes_Api.response.NotesResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.NotesService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -46,6 +47,8 @@ public class NotesServiceIml implements NotesService {
     private CategoryRepository categoryRepository;
     @Autowired
     private FileRepository fileRepository;
+    @Autowired
+    private FavouriteNodeRepository favouriteNodeRepository;
     @Value("${file.upload.path}")
     private String uploadPath;
 
@@ -223,6 +226,34 @@ public class NotesServiceIml implements NotesService {
         if(!CollectionUtils.isEmpty(recycleNotes)){
             notesRepository.deleteAll(recycleNotes);
         }
+    }
+
+    @Override
+    public void favouriteNote(Integer noteId) throws ResourceNotfoundException {
+        Integer userId = 1;
+        Notes notes = notesRepository.findById(noteId)
+                .orElseThrow(()->new ResourceNotfoundException("Note not found & id invalid"));
+        FavouriteNote favouriteNote = FavouriteNote.builder()
+                .userId(userId)
+                .note(notes)
+                .build();
+        favouriteNodeRepository.save(favouriteNote);
+
+    }
+
+    @Override
+    public void unFavouriteNote(Integer favouriteNoteId) throws ResourceNotfoundException {
+        FavouriteNote notes = favouriteNodeRepository.findById(favouriteNoteId)
+                .orElseThrow(()->new ResourceNotfoundException("Note not found & id invalid"));
+
+        favouriteNodeRepository.delete(notes);
+    }
+
+    @Override
+    public List<FavouriteNoteDto> getUserFavouriteNotes() {
+        Integer userId = 1;
+        List<FavouriteNote> favouriteNotes = favouriteNodeRepository.findByUserId(userId);
+        return favouriteNotes.stream().map(fn -> modelMapper.map(fn, FavouriteNoteDto.class)).collect(Collectors.toList());
     }
 
 }

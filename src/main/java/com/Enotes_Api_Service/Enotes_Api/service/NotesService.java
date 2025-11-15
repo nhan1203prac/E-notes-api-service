@@ -1,6 +1,8 @@
 package com.Enotes_Api_Service.Enotes_Api.service;
 
+import com.Enotes_Api_Service.Enotes_Api.dto.FavouriteNoteDto;
 import com.Enotes_Api_Service.Enotes_Api.dto.NotesDto;
+import com.Enotes_Api_Service.Enotes_Api.entity.FavouriteNote;
 import com.Enotes_Api_Service.Enotes_Api.entity.FileDetails;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.response.NotesResponse;
@@ -27,4 +29,8 @@ public interface NotesService {
     void hardDeleteNotes(Integer id) throws ResourceNotfoundException;
 
     void emptyRecycleBin(Integer userId);
+    void  favouriteNote(Integer noteId) throws ResourceNotfoundException;
+    void  unFavouriteNote(Integer noteId) throws ResourceNotfoundException;
+    public List<FavouriteNoteDto> getUserFavouriteNotes();
+
 }

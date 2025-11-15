@@ -18,8 +18,8 @@ public class NotesSchedule {
     public NotesSchedule(NotesRepository notesRepository) {
     }
 
-//    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(cron = "* * * ? * *")
+    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(cron = "* * * ? * *")
     public void deleteNotesSchedule() {
         Instant cutOffDate = Instant.now().minus(7, ChronoUnit.DAYS);
         List<Notes> deletedNotes = notesRepository.findAllByIsDeletedAndDeletedOnBefore(true, cutOffDate);
