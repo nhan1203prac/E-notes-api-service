@@ -52,6 +52,7 @@ public class NotesServiceIml implements NotesService {
     @Value("${file.upload.path}")
     private String uploadPath;
 
+
     @Override
     public Boolean createNote(String note, MultipartFile file) throws ResourceNotfoundException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -254,6 +255,24 @@ public class NotesServiceIml implements NotesService {
         Integer userId = 1;
         List<FavouriteNote> favouriteNotes = favouriteNodeRepository.findByUserId(userId);
         return favouriteNotes.stream().map(fn -> modelMapper.map(fn, FavouriteNoteDto.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean copyNotes(Integer id) throws ResourceNotfoundException {
+        Notes notes = notesRepository.findById(id).orElseThrow(()->new ResourceNotfoundException("Notes id invalid"));
+        Notes copyNote = Notes.builder()
+                .title(notes.getTitle())
+                .description(notes.getDescription())
+                .category(notes.getCategory())
+                .isDeleted(false)
+                .fileDetails(null)
+                .build();
+
+        Notes savedNoteCopy = notesRepository.save(copyNote);
+        if(!ObjectUtils.isEmpty(savedNoteCopy)){
+            return true;
+        }
+        return false;
     }
 
 }
