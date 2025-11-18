@@ -26,6 +26,12 @@ public class GlobalExceptionHandler {
         return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(SuccessException.class)
+    public ResponseEntity<?> SuccessExceptionHandle(SuccessException ex){
+        log.error("GlobalExceptionHandler :: SuccessExceptionHandle ::", ex.getMessage());
+        return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.OK);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException e){
         log.error("GlobalExceptionHandler :: handleIllegalArgumentException ::", e.getMessage());

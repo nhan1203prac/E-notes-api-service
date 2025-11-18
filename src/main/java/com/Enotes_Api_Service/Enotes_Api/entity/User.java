@@ -22,6 +22,14 @@ public class User {
     private String email;
     private String mobNo;
     private String password;
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private List<Role> roles;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "status_id")
+    private AccountStatus status;
 }
