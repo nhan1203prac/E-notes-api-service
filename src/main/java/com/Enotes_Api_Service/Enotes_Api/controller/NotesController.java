@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +27,8 @@ public class NotesController {
     private NotesService notesService;
 
     @PostMapping("/")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> saveNotes(@RequestParam String notes, @RequestParam(required = false) MultipartFile file) throws ResourceNotfoundException, IOException {
         Boolean saveNotes = notesService.createNote(notes,file);
         if (saveNotes) {
@@ -35,6 +38,7 @@ public class NotesController {
     }
 
     @GetMapping("/dowload/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<?> dowloadFile(@PathVariable Integer id) throws ResourceNotfoundException, IOException {
         FileDetails fileDetails = notesService.getFileDetails(id);
         byte[] dowloadFile = notesService.dowloadFile(fileDetails);
@@ -44,6 +48,8 @@ public class NotesController {
         return ResponseEntity.ok().headers(headers).body(dowloadFile);
     }
     @GetMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<?> getAllNotes() {
         List<NotesDto>  notes = notesService.getAllNotes();
         if (CollectionUtils.isEmpty(notes)) {
@@ -53,6 +59,8 @@ public class NotesController {
     }
 
     @GetMapping("/user-notes")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> getUserNotes(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
                                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         Integer userId = 1;
@@ -68,18 +76,24 @@ public class NotesController {
 
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> deleteNote(@PathVariable Integer id) throws ResourceNotfoundException {
         notesService.softDeleteNotes(id);
         return CommonUtil.createBuildResponseMessage("Note deleted successfully", HttpStatus.OK);
     }
 
     @PatchMapping("/restore/{id}")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> restoreNote(@PathVariable Integer id) throws ResourceNotfoundException {
         notesService.restoreNotes(id);
         return CommonUtil.createBuildResponseMessage("Restore successfully", HttpStatus.OK);
     }
 
     @GetMapping("/recycle-bin")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> getUserRecycleBinNotes(){
         Integer userId = 1;
         List<NotesDto> notes = notesService.getUserRecycleBinNotes(userId);
@@ -90,12 +104,16 @@ public class NotesController {
     }
 
     @DeleteMapping("/hard-delete/{id}")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> hardDeleteNote(@PathVariable Integer id) throws ResourceNotfoundException {
         notesService.hardDeleteNotes(id);
         return CommonUtil.createBuildResponseMessage("Note deleted successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-recycle")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> emptyRecyclebin() throws ResourceNotfoundException {
         Integer userId = 1;
         notesService.emptyRecycleBin(userId);
@@ -103,18 +121,24 @@ public class NotesController {
     }
 
     @GetMapping("/fav/{noteId}")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> favouriteNode(@PathVariable Integer noteId) throws ResourceNotfoundException {
         notesService.favouriteNote(noteId);
         return CommonUtil.createBuildResponseMessage("Notes added Favourite", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/un-fav/{favNoteId}")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> unFavouriteNode(@PathVariable Integer favNoteId) throws ResourceNotfoundException {
         notesService.unFavouriteNote(favNoteId);
         return CommonUtil.createBuildResponseMessage("Remove success", HttpStatus.OK);
     }
 
     @GetMapping("/fav-note")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> getUserFavouriteNotes() throws ResourceNotfoundException {
         List<FavouriteNoteDto> userFavouriteNotes = notesService.getUserFavouriteNotes();
         if(CollectionUtils.isEmpty(userFavouriteNotes)) {
@@ -124,6 +148,8 @@ public class NotesController {
     }
 
     @GetMapping("/copy/{id}")
+    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<?> copyNote(@PathVariable Integer id) throws ResourceNotfoundException {
         Boolean  copyNotes = notesService.copyNotes(id);
         if(copyNotes){

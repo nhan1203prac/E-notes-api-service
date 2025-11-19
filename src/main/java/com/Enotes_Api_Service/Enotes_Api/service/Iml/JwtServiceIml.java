@@ -1,8 +1,12 @@
 package com.Enotes_Api_Service.Enotes_Api.service.Iml;
 
 import com.Enotes_Api_Service.Enotes_Api.entity.User;
+import com.Enotes_Api_Service.Enotes_Api.exception.JwtAuthenticationException;
+import com.Enotes_Api_Service.Enotes_Api.exception.JwtTokenExpiredException;
 import com.Enotes_Api_Service.Enotes_Api.service.JwtService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -19,16 +23,19 @@ import java.util.Map;
 @Service
 public class JwtServiceIml implements JwtService {
     private String secretKey = "";
+    private static final String SECRET_KEY_BASE64 =
+            "THISISAVERYLONGSECRETKEYFORHMACSHA256ALGORITHMANDITMUSTBELONG";
 
-    public JwtServiceIml() {
-       try {
-           KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
-           SecretKey sk = keyGenerator.generateKey();
-           secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-       }catch (Exception e) {
-           e.printStackTrace();
-       }
-    }
+    private final Key key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY_BASE64));
+//    public JwtServiceIml() {
+//       try {
+//           KeyGenerator keyGenerator = KeyGenerator.getInstance("HmacSHA256");
+//           SecretKey sk = keyGenerator.generateKey();
+//           secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+//       }catch (Exception e) {
+//           e.printStackTrace();
+//       }
+//    }
 
     @Override
     public String generateJwtToken(User user) {
@@ -41,7 +48,7 @@ public class JwtServiceIml implements JwtService {
                 .subject(user.getEmail())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-                .signWith(getKey())
+                .signWith(key)
                 .compact();
         return jwt;
     }
@@ -56,11 +63,21 @@ public class JwtServiceIml implements JwtService {
 
 
     private Claims extractAllClaims(String token) {
-       return Jwts.parser()
-               .verifyWith((SecretKey) getKey())
-               .build()
-               .parseSignedClaims(token)
-               .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith((SecretKey) key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        }catch (ExpiredJwtException e){
+            throw new JwtTokenExpiredException("Token is expired");
+        }catch (JwtException e){
+            throw new JwtAuthenticationException("Invalid jwt token");
+
+        }catch (Exception e) {
+            throw e;
+        }
+
     }
 
     @Override
@@ -86,9 +103,9 @@ public class JwtServiceIml implements JwtService {
         return expiration.before(new Date());
     }
 
-    private Key getKey(){
-        byte[] encodedKey = Decoders.BASE64.decode(secretKey);
-
-        return Keys.hmacShaKeyFor(encodedKey);
-    }
+//    private Key getKey(){
+//        byte[] encodedKey = Decoders.BASE64.decode(secretKey);
+//
+//        return Keys.hmacShaKeyFor(encodedKey);
+//    }
 }

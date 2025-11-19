@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.io.FileNotFoundException;
+import java.nio.file.AccessDeniedException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> exception(Exception ex){
         log.error("GlobalExceptionHandler :: handleException ::", ex.getMessage());
         return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException ex){
+        log.error("GlobalExceptionHandler :: handleAccessDeniedException ::", ex.getMessage());
+        return CommonUtil.createErrorResponseMessage(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(SuccessException.class)
@@ -85,12 +92,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(FileNotFoundException.class)
     public ResponseEntity<?> handleFileNotFoundException(FileNotFoundException e){
         log.error("GlobalExceptionHandler :: handleFileNotFoundException ::", e.getMessage());
-        return CommonUtil.createErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e){
         log.error("GlobalExceptionHandler :: handleBadCredentialsException ::", e.getMessage());
-        return CommonUtil.createErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
