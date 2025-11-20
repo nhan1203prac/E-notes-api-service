@@ -1,14 +1,19 @@
 package com.Enotes_Api_Service.Enotes_Api.service;
 
-import com.Enotes_Api_Service.Enotes_Api.dto.LoginRequest;
-import com.Enotes_Api_Service.Enotes_Api.dto.UserRequest;
-import com.Enotes_Api_Service.Enotes_Api.response.LoginResponse;
+import com.Enotes_Api_Service.Enotes_Api.dto.PasswordChangeRequest;
+import com.Enotes_Api_Service.Enotes_Api.dto.PasswordResetRequest;
+import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.UnsupportedEncodingException;
 
 public interface UserService {
-    public Boolean registerUser(UserRequest user, String url) throws MessagingException, UnsupportedEncodingException;
+    void changePassword(PasswordChangeRequest passwordChangeRequest);
 
-    LoginResponse login(LoginRequest user);
+    void sendEmailPasswordReset(String email, HttpServletRequest req) throws ResourceNotfoundException, MessagingException, UnsupportedEncodingException;
+
+    void verifyPasswordResetLink(Integer uid, String code) throws ResourceNotfoundException;
+
+    void resetPassword(PasswordResetRequest passwordResetRequest) throws ResourceNotfoundException;
 }
