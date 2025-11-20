@@ -6,7 +6,6 @@ import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.exception.SuccessException;
 import com.Enotes_Api_Service.Enotes_Api.repository.UserRepository;
 import com.Enotes_Api_Service.Enotes_Api.service.HomeService;
-import com.Enotes_Api_Service.Enotes_Api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

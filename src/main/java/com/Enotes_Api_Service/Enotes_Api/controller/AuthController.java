@@ -4,7 +4,7 @@ import com.Enotes_Api_Service.Enotes_Api.dto.LoginRequest;
 import com.Enotes_Api_Service.Enotes_Api.dto.UserRequest;
 import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
 import com.Enotes_Api_Service.Enotes_Api.response.LoginResponse;
-import com.Enotes_Api_Service.Enotes_Api.service.UserService;
+import com.Enotes_Api_Service.Enotes_Api.service.AuthService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     @Autowired
-    private UserService userService;
+    private AuthService userService;
 
     @PostMapping("/")
     public ResponseEntity<?> createUser(@RequestBody UserRequest user, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
