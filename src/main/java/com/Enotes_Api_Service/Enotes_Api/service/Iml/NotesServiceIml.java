@@ -67,7 +67,7 @@ public class NotesServiceIml implements NotesService {
         log.info("Uploading file: {}", notesDto);
         checkCategoryExist(notesDto.getCategory());
         Notes notes = modelMapper.map(notesDto, Notes.class);
-        log.info("Uploading file2: {}", notes.getFileDetails().getPath());
+//        log.info("Uploading file2: {}", notes.getFileDetails().getPath());
         FileDetails fileDetails = saveFileDetails(file);
         if(!ObjectUtils.isEmpty(fileDetails)) {
             notes.setFileDetails(fileDetails);

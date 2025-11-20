@@ -5,7 +5,7 @@ import com.Enotes_Api_Service.Enotes_Api.Utils.EmailSend;
 import com.Enotes_Api_Service.Enotes_Api.Utils.Validation;
 import com.Enotes_Api_Service.Enotes_Api.dto.EmailRequest;
 import com.Enotes_Api_Service.Enotes_Api.dto.LoginRequest;
-import com.Enotes_Api_Service.Enotes_Api.dto.UserDto;
+import com.Enotes_Api_Service.Enotes_Api.dto.UserRequest;
 import com.Enotes_Api_Service.Enotes_Api.entity.AccountStatus;
 import com.Enotes_Api_Service.Enotes_Api.entity.Role;
 import com.Enotes_Api_Service.Enotes_Api.entity.User;
@@ -51,7 +51,7 @@ public class UserServiceIml implements UserService {
     @Autowired
     private JwtService jwtService;
     @Override
-    public Boolean registerUser(UserDto userDto, String url) throws MessagingException, UnsupportedEncodingException {
+    public Boolean registerUser(UserRequest userDto, String url) throws MessagingException, UnsupportedEncodingException {
         validation.userValidation(userDto);
         User user = modelMapper.map(userDto,User.class);
         setRole(userDto, user);
@@ -93,7 +93,7 @@ public class UserServiceIml implements UserService {
         emailSend.send(emailRequest);
     }
 
-    void setRole(UserDto userDto, User user) {
+    void setRole(UserRequest userDto, User user) {
         List<Integer> roleDto = userDto.getRoles().stream().map(r->r.getId()).toList();
         List<Role> role = roleRepository.findAllById(roleDto);
         log.info("Role List: {}", role);
@@ -129,7 +129,7 @@ public class UserServiceIml implements UserService {
             CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
             String token = jwtService.generateJwtToken(customUserDetail.getUser());
             return LoginResponse.builder()
-                    .user(modelMapper.map(customUserDetail.getUser(), UserDto.class))
+                    .user(modelMapper.map(customUserDetail.getUser(), UserRequest.class))
                     .token(token)
                     .build();
         } catch (AuthenticationException ex) {

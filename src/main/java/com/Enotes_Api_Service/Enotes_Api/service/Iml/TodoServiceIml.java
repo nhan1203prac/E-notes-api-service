@@ -5,6 +5,7 @@ import com.Enotes_Api_Service.Enotes_Api.Utils.Validation;
 import com.Enotes_Api_Service.Enotes_Api.dto.TodoDto;
 import com.Enotes_Api_Service.Enotes_Api.entity.Todo;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
+import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
 import com.Enotes_Api_Service.Enotes_Api.repository.TodoRepository;
 import com.Enotes_Api_Service.Enotes_Api.service.TodoService;
 import org.modelmapper.ModelMapper;
@@ -59,7 +60,7 @@ public class TodoServiceIml implements TodoService {
 
     @Override
     public List<TodoDto> getTodoByUser() {
-        Integer userId = 1;
+        Integer userId = CommonUtil.getLoggedUser().getId();
         List<Todo> todos = todoRepository.findByCreatedBy(userId);
         return todos.stream().map(td->modelMapper.map(td, TodoDto.class)).toList();
     }

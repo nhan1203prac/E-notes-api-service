@@ -1,8 +1,9 @@
 package com.Enotes_Api_Service.Enotes_Api.dto;
 
-import com.Enotes_Api_Service.Enotes_Api.entity.Role;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Data
-public class UserDto {
+public class UserRequest {
     private Integer id;
     private String firstName;
     private String lastName;
@@ -22,6 +23,7 @@ public class UserDto {
     private String mobNo;
     private String password;
     private List<RoleDto> roles;
+    private StatusDto status;
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -30,5 +32,15 @@ public class UserDto {
     public static class RoleDto{
         private Integer id;
         private String name;
+    }
+
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    @Builder
+    public static class StatusDto {
+        private Integer id;
+        private Boolean isActive;
     }
 }

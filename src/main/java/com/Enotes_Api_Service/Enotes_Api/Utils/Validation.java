@@ -3,7 +3,7 @@ package com.Enotes_Api_Service.Enotes_Api.Utils;
 import com.Enotes_Api_Service.Enotes_Api.Enum.TodoStatus;
 import com.Enotes_Api_Service.Enotes_Api.dto.CategoryDto;
 import com.Enotes_Api_Service.Enotes_Api.dto.TodoDto;
-import com.Enotes_Api_Service.Enotes_Api.dto.UserDto;
+import com.Enotes_Api_Service.Enotes_Api.dto.UserRequest;
 import com.Enotes_Api_Service.Enotes_Api.exception.ExistDataException;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.exception.ValidationException;
@@ -75,7 +75,7 @@ public class Validation {
         }
     }
 
-    public void userValidation(UserDto userDto){
+    public void userValidation(UserRequest userDto){
 
         if(!StringUtils.hasText(userDto.getFirstName())){
             throw new IllegalArgumentException("first name is invalid");

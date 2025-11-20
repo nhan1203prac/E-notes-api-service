@@ -1,10 +1,15 @@
 package com.Enotes_Api_Service.Enotes_Api.handler;
 
+import com.Enotes_Api_Service.Enotes_Api.Config.CustomUserDetail;
+import com.Enotes_Api_Service.Enotes_Api.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class CommonUtil {
 
@@ -68,5 +73,14 @@ public class CommonUtil {
         String apiUrl = request.getRequestURL().toString();
         apiUrl = apiUrl.replace(request.getServletPath(), "");
         return apiUrl;
+    }
+
+    public static User getLoggedUser(){
+        try {
+            CustomUserDetail user = (CustomUserDetail)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return user.getUser();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }
