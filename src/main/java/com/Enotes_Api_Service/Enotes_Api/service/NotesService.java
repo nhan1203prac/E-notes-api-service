@@ -19,7 +19,7 @@ public interface NotesService {
     public FileDetails getFileDetails(Integer id) throws ResourceNotfoundException;
     byte[] dowloadFile(FileDetails fileDetails) throws ResourceNotfoundException, IOException;
     public NotesResponse getAllNotesByUser(Integer id, Integer pageNo, Integer pageSize);
-
+    public NotesResponse getNotesByUserSearch(Integer pageNo, Integer pageSize,String keyword);
     void softDeleteNotes(Integer id) throws ResourceNotfoundException;
 
     void restoreNotes(Integer id) throws ResourceNotfoundException;

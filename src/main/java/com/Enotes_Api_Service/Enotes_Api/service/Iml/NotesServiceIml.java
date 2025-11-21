@@ -6,6 +6,7 @@ import com.Enotes_Api_Service.Enotes_Api.entity.FavouriteNote;
 import com.Enotes_Api_Service.Enotes_Api.entity.FileDetails;
 import com.Enotes_Api_Service.Enotes_Api.entity.Notes;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
+import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
 import com.Enotes_Api_Service.Enotes_Api.repository.CategoryRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.FavouriteNodeRepository;
 import com.Enotes_Api_Service.Enotes_Api.repository.FileRepository;
@@ -170,6 +171,28 @@ public class NotesServiceIml implements NotesService {
     public NotesResponse getAllNotesByUser(Integer id, Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Notes> notes = notesRepository.findByCreatedByAndIsDeletedFalse(id, pageable);
+        List<NotesDto> notesDtos = notes.getContent()
+                .stream()
+                .map(note -> modelMapper.map(note, NotesDto.class))
+                .collect(Collectors.toList());
+
+        NotesResponse notesResponse = NotesResponse.builder()
+                .notes(notesDtos)
+                .pageNo(notes.getNumber())
+                .pageSize(notes.getSize())
+                .totalElements(notes.getTotalElements())
+                .totalPages(notes.getTotalPages())
+                .isFirst(notes.isFirst())
+                .isLast(notes.isLast())
+                .build();
+        return notesResponse;
+    }
+
+    @Override
+    public NotesResponse getNotesByUserSearch(Integer pageNo, Integer pageSize, String keyword) {
+        Integer id = CommonUtil.getLoggedUser().getId();
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Notes> notes = notesRepository.searchNotes(keyword,id,pageable);
         List<NotesDto> notesDtos = notes.getContent()
                 .stream()
                 .map(note -> modelMapper.map(note, NotesDto.class))
