@@ -34,8 +34,8 @@ spring:
       mail:
         smtp:
           auth: true
-        starttls:
-          enable: true
+          starttls:
+            enable: true
 
 file:
   upload:
@@ -77,8 +77,8 @@ spring:
       mail:
         smtp:
           auth: true
-        starttls:
-          enable: true
+          starttls:
+            enable: true
 
 file:
   upload:
@@ -117,8 +117,8 @@ spring:
       mail:
         smtp:
           auth: true
-        starttls:
-          enable: true
+          starttls:
+            enable: true
 
 file:
   upload:
@@ -156,8 +156,8 @@ spring:
       mail:
         smtp:
           auth: true
-        starttls:
-          enable: true
+          starttls:
+            enable: true
 
 file:
   upload:

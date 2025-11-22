@@ -53,6 +53,7 @@ public class AuthServiceIml implements AuthService {
     private JwtService jwtService;
     @Override
     public Boolean registerUser(UserRequest userDto, String url) throws MessagingException, UnsupportedEncodingException {
+        log.info("AuthServiceIml : registerUser() : Execution start");
         validation.userValidation(userDto);
         User user = modelMapper.map(userDto,User.class);
         setRole(userDto, user);
@@ -63,11 +64,15 @@ public class AuthServiceIml implements AuthService {
         user.setStatus(status);
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User savedUser = UserRepository.save(user);
-        if(!ObjectUtils.isEmpty(savedUser)){
-            sendEmailForRegister(savedUser, url);
-            return true;
+        if(ObjectUtils.isEmpty(savedUser)){
+            log.info("error : {}","email send success");
+            return false;
         }
-        return false;
+        log.info("message : {}","register success");
+        sendEmailForRegister(savedUser, url);
+        log.info("message : {}"," emailSend success");
+        log.info("AuthServiceIml : registerUser() : Execution end");
+        return true;
     }
 
 
