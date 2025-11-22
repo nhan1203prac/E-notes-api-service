@@ -1,0 +1,168 @@
+spring:
+  application:
+    name: enotes-api-service
+
+  profiles:
+    active: test
+---
+#Dev config
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3307/enotes_dev
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ro
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+          max-file-size: 50MB
+          max-request-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    username: vtn12032004@gmail.com
+    port: 587
+    password: rpzlwrlgycrzwoyl
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+
+file:
+  upload:
+    path: notes/
+
+email:
+  send:
+    from: vtn12032004@gmail.com
+---
+#Test config
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:mysql://localhost:3307/enotes_test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ro
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    username: vtn12032004@gmail.com
+    port: 587
+    password: rpzlwrlgycrzwoyl
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+
+file:
+  upload:
+    path: notes/
+
+email:
+  send:
+    from: vtn12032004@gmail.com
+---
+#Uat config
+spring:
+  config:
+    activate:
+      on-profile: uat
+  datasource:
+    url: jdbc:mysql://localhost:3307/enotes_uat
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ro
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    username: vtn12032004@gmail.com
+    port: 587
+    password: rpzlwrlgycrzwoyl
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+
+file:
+  upload:
+    path: notes/
+email:
+  send:
+    from: vtn12032004@gmail.com
+---
+#Prod config
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:mysql://localhost:3307/enotes_prod
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: ro
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    username: vtn12032004@gmail.com
+    port: 587
+    password: rpzlwrlgycrzwoyl
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+
+file:
+  upload:
+    path: notes/
+
+email:
+  send:
+    from: vtn12032004@gmail.com
