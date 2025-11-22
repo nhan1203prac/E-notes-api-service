@@ -1,6 +1,7 @@
 package com.Enotes_Api_Service.Enotes_Api.controller;
 
 import com.Enotes_Api_Service.Enotes_Api.dto.TodoDto;
+import com.Enotes_Api_Service.Enotes_Api.endpoint.TodoControllerEndPoint;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
 import com.Enotes_Api_Service.Enotes_Api.service.TodoService;
@@ -14,14 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/todo")
-public class TodoController {
+public class TodoController implements TodoControllerEndPoint {
     @Autowired
     private TodoService todoService;
 
-    @PostMapping("/")
-    @PreAuthorize("hasRole('USER')")
 
+    @Override
     public ResponseEntity<?> saveTodo(@RequestBody TodoDto todoDto) throws ResourceNotfoundException {
         Boolean saveTodo = todoService.saveTodod(todoDto);
         if(saveTodo){
@@ -33,16 +32,15 @@ public class TodoController {
 
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @Override
 
     public ResponseEntity<?> getTodoById(@PathVariable Integer id) throws ResourceNotfoundException {
         TodoDto todoDto = todoService.getTodoById(id);
         return CommonUtil.createBuildResponse(todoDto, HttpStatus.OK);
     }
 
-    @GetMapping("/list")
-    @PreAuthorize("hasRole('USER')")
+
+    @Override
 
     public ResponseEntity<?> getAllTodoUser() throws ResourceNotfoundException {
         List<TodoDto> todoDto = todoService.getTodoByUser();

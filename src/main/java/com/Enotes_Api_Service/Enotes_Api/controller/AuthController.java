@@ -2,6 +2,7 @@ package com.Enotes_Api_Service.Enotes_Api.controller;
 
 import com.Enotes_Api_Service.Enotes_Api.dto.LoginRequest;
 import com.Enotes_Api_Service.Enotes_Api.dto.UserRequest;
+import com.Enotes_Api_Service.Enotes_Api.endpoint.AuthControllerEndPoint;
 import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
 import com.Enotes_Api_Service.Enotes_Api.response.LoginResponse;
 import com.Enotes_Api_Service.Enotes_Api.service.AuthService;
@@ -21,12 +22,11 @@ import java.io.UnsupportedEncodingException;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")
-public class AuthController {
+public class AuthController implements AuthControllerEndPoint {
     @Autowired
     private AuthService userService;
 
-    @PostMapping("/")
+    @Override
     public ResponseEntity<?> createUser(@RequestBody UserRequest user, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
         log.info("AuthController : RegisterUser() : Execution start");
         String url = CommonUtil.getUrl(request);
@@ -38,8 +38,7 @@ public class AuthController {
         log.info("Error : RegisterUser() : failure");
         return CommonUtil.createErrorResponseMessage("user saved fail", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    @PostMapping("/login")
+    @Override
     public ResponseEntity<?> login(@RequestBody LoginRequest user) {
         LoginResponse loginResponse = userService.login(user);
         if(ObjectUtils.isEmpty(loginResponse)){
