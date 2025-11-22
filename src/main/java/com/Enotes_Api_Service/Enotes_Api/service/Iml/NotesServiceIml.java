@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -53,7 +54,8 @@ public class NotesServiceIml implements NotesService {
     @Value("${file.upload.path}")
     private String uploadPath;
 
-
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Override
     public Boolean createNote(String note, MultipartFile file) throws ResourceNotfoundException, IOException {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -170,6 +172,7 @@ public class NotesServiceIml implements NotesService {
     @Override
     public NotesResponse getAllNotesByUser(Integer id, Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
+//        log.info("password encode = {}",bCryptPasswordEncoder.encode("123456"));
         Page<Notes> notes = notesRepository.findByCreatedByAndIsDeletedFalse(id, pageable);
         List<NotesDto> notesDtos = notes.getContent()
                 .stream()
