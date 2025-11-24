@@ -26,7 +26,7 @@ public class HomeController implements HomeControllerEndpoint {
     private UserService userService;
 
     @Override
-    public ResponseEntity<?> verify(@RequestParam("uid") Integer uid, @RequestParam("code") String code) throws ResourceNotfoundException {
+    public ResponseEntity<?> verify(Integer uid, String code) throws ResourceNotfoundException {
         log.info("HomeController : verifyUserAccount() : Execution start");
         Boolean verify = homeService.verifyAccount(uid,code);
         if(verify){
@@ -37,20 +37,20 @@ public class HomeController implements HomeControllerEndpoint {
     }
 
     @Override
-    public ResponseEntity<?> sendEmaiForPasswordReset(@RequestParam String email, HttpServletRequest request) throws ResourceNotfoundException, MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<?> sendEmaiForPasswordReset(String email, HttpServletRequest request) throws ResourceNotfoundException, MessagingException, UnsupportedEncodingException {
         userService.sendEmailPasswordReset(email,request);
         return CommonUtil.createBuildResponseMessage("Email send success", HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<?> verifyPasswordResetLink(@RequestParam Integer uid, @RequestParam String code) throws ResourceNotfoundException {
+    public ResponseEntity<?> verifyPasswordResetLink(Integer uid, String code) throws ResourceNotfoundException {
         userService.verifyPasswordResetLink(uid, code);
         return CommonUtil.createBuildResponseMessage("verifycation success", HttpStatus.OK);
 
     }
 
     @Override
-    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest passwordResetRequest) throws ResourceNotfoundException {
+    public ResponseEntity<?> resetPassword(PasswordResetRequest passwordResetRequest) throws ResourceNotfoundException {
         userService.resetPassword(passwordResetRequest);
         return CommonUtil.createErrorResponseMessage("Password reset success", HttpStatus.OK);
     }

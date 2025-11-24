@@ -18,10 +18,13 @@ import org.springframework.util.StringUtils;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.Enotes_Api_Service.Enotes_Api.Utils.Constant.EMAIL_REGEX;
+import static com.Enotes_Api_Service.Enotes_Api.Utils.Constant.PHONE_REGEX;
+
 @Component
 public class Validation {
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-    private static final String PHONE_REGEX = "^\\+?[1-9]\\d{1,14}$\n";
+
 
     @Autowired
     private RoleRepository roleRepository;
