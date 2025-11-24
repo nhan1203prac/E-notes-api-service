@@ -27,7 +27,7 @@ public class AuthController implements AuthControllerEndPoint {
     private AuthService userService;
 
     @Override
-    public ResponseEntity<?> createUser(@RequestBody UserRequest user, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
+    public ResponseEntity<?> createUser(UserRequest user, HttpServletRequest request) throws MessagingException, UnsupportedEncodingException {
         log.info("AuthController : RegisterUser() : Execution start");
         String url = CommonUtil.getUrl(request);
         Boolean register = userService.registerUser(user,url);
@@ -39,7 +39,7 @@ public class AuthController implements AuthControllerEndPoint {
         return CommonUtil.createErrorResponseMessage("user saved fail", HttpStatus.INTERNAL_SERVER_ERROR);
     }
     @Override
-    public ResponseEntity<?> login(@RequestBody LoginRequest user) {
+    public ResponseEntity<?> login(LoginRequest user) {
         LoginResponse loginResponse = userService.login(user);
         if(ObjectUtils.isEmpty(loginResponse)){
             return CommonUtil.createErrorResponseMessage("Invalid credential", HttpStatus.BAD_REQUEST);

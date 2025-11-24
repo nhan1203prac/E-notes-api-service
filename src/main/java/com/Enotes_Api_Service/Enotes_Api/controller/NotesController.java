@@ -28,7 +28,7 @@ public class NotesController implements NoteControllerEndpoint {
 
 
     @Override
-    public ResponseEntity<?> saveNotes(@RequestParam String notes, @RequestParam(required = false) MultipartFile file) throws ResourceNotfoundException, IOException {
+    public ResponseEntity<?> saveNotes(String notes, MultipartFile file) throws ResourceNotfoundException, IOException {
         Boolean saveNotes = notesService.createNote(notes,file);
         if (saveNotes) {
             return CommonUtil.createBuildResponseMessage("Notes saved success", HttpStatus.CREATED);
@@ -38,7 +38,7 @@ public class NotesController implements NoteControllerEndpoint {
 
     @Override
 
-    public ResponseEntity<?> dowloadFile(@PathVariable Integer id) throws ResourceNotfoundException, IOException {
+    public ResponseEntity<?> dowloadFile(Integer id) throws ResourceNotfoundException, IOException {
         FileDetails fileDetails = notesService.getFileDetails(id);
         byte[] dowloadFile = notesService.dowloadFile(fileDetails);
         HttpHeaders headers = new HttpHeaders();
@@ -60,8 +60,7 @@ public class NotesController implements NoteControllerEndpoint {
 
     @Override
 
-    public ResponseEntity<?> getUserNotes(@RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-                                          @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+    public ResponseEntity<?> getUserNotes(Integer pageNo, Integer pageSize) {
         Integer userId = CommonUtil.getLoggedUser().getId();
         NotesResponse notesResponse = notesService.getAllNotesByUser(userId, pageNo, pageSize);
 //        if(CollectionUtils.isEmpty(notesResponse.getNotes())) {
@@ -77,9 +76,9 @@ public class NotesController implements NoteControllerEndpoint {
     @Override
 
     public ResponseEntity<?> searchNotes(
-            @RequestParam(name = "key", defaultValue = "") String key,
-            @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
+            String key,
+            Integer pageNo,
+            Integer pageSize) {
         Integer userId = CommonUtil.getLoggedUser().getId();
         NotesResponse notesResponse = notesService.getNotesByUserSearch(pageNo, pageSize, key);
 //        if(CollectionUtils.isEmpty(notesResponse.getNotes())) {
@@ -95,14 +94,14 @@ public class NotesController implements NoteControllerEndpoint {
 
     @Override
 
-    public ResponseEntity<?> deleteNote(@PathVariable Integer id) throws ResourceNotfoundException {
+    public ResponseEntity<?> deleteNote(Integer id) throws ResourceNotfoundException {
         notesService.softDeleteNotes(id);
         return CommonUtil.createBuildResponseMessage("Note deleted successfully", HttpStatus.OK);
     }
 
     @Override
 
-    public ResponseEntity<?> restoreNote(@PathVariable Integer id) throws ResourceNotfoundException {
+    public ResponseEntity<?> restoreNote(Integer id) throws ResourceNotfoundException {
         notesService.restoreNotes(id);
         return CommonUtil.createBuildResponseMessage("Restore successfully", HttpStatus.OK);
     }
@@ -122,7 +121,7 @@ public class NotesController implements NoteControllerEndpoint {
 
     @Override
 
-    public ResponseEntity<?> hardDeleteNote(@PathVariable Integer id) throws ResourceNotfoundException {
+    public ResponseEntity<?> hardDeleteNote(Integer id) throws ResourceNotfoundException {
         notesService.hardDeleteNotes(id);
         return CommonUtil.createBuildResponseMessage("Note deleted successfully", HttpStatus.OK);
     }
@@ -138,7 +137,7 @@ public class NotesController implements NoteControllerEndpoint {
 
     @Override
 
-    public ResponseEntity<?> favouriteNode(@PathVariable Integer noteId) throws ResourceNotfoundException {
+    public ResponseEntity<?> favouriteNode(Integer noteId) throws ResourceNotfoundException {
         notesService.favouriteNote(noteId);
         return CommonUtil.createBuildResponseMessage("Notes added Favourite", HttpStatus.CREATED);
     }
@@ -146,7 +145,7 @@ public class NotesController implements NoteControllerEndpoint {
 
     @Override
 
-    public ResponseEntity<?> unFavouriteNode(@PathVariable Integer favNoteId) throws ResourceNotfoundException {
+    public ResponseEntity<?> unFavouriteNode(Integer favNoteId) throws ResourceNotfoundException {
         notesService.unFavouriteNote(favNoteId);
         return CommonUtil.createBuildResponseMessage("Remove success", HttpStatus.OK);
     }
@@ -165,7 +164,7 @@ public class NotesController implements NoteControllerEndpoint {
 
     @Override
 
-    public ResponseEntity<?> copyNote(@PathVariable Integer id) throws ResourceNotfoundException {
+    public ResponseEntity<?> copyNote(Integer id) throws ResourceNotfoundException {
         Boolean  copyNotes = notesService.copyNotes(id);
         if(copyNotes){
             return CommonUtil.createBuildResponseMessage("Copied success", HttpStatus.CREATED);
