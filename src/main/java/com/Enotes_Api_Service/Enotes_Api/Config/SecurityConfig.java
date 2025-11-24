@@ -49,7 +49,13 @@ public class SecurityConfig {
                 .csrf(csrf->csrf.disable())
 
                 .authorizeHttpRequests(req->
-                        req.requestMatchers("/api/v1/auth/**", "/api/v1/home/**" ).permitAll()
+                        req.requestMatchers("/api/v1/auth/**",
+                                        "/api/v1/home/**",
+                                        "/swagger-ui/**",
+                                        "/enotes-doc/**",
+                                        "/enotes-api-doc/**",
+                                        "/v3/api-docs/**"
+                                        ).permitAll()
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
