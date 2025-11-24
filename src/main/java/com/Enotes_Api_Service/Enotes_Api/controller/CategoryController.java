@@ -1,6 +1,7 @@
 package com.Enotes_Api_Service.Enotes_Api.controller;
 
 import com.Enotes_Api_Service.Enotes_Api.dto.CategoryDto;
+import com.Enotes_Api_Service.Enotes_Api.endpoint.CategoryControllerEndPoint;
 import com.Enotes_Api_Service.Enotes_Api.entity.Category;
 import com.Enotes_Api_Service.Enotes_Api.exception.ResourceNotfoundException;
 import com.Enotes_Api_Service.Enotes_Api.handler.CommonUtil;
@@ -19,14 +20,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/category")
-public class CategoryController {
+public class CategoryController implements CategoryControllerEndPoint {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> saveCategory(@Valid @RequestBody CategoryDto category) {
+    @Override
+    public ResponseEntity<?> saveCategory(CategoryDto category) {
         Boolean saveCategory = categoryService.saveCategory(category);
         if (saveCategory) {
             return CommonUtil.createBuildResponseMessage("saved success", HttpStatus.CREATED);
@@ -38,8 +37,7 @@ public class CategoryController {
 
     }
 
-    @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> getAllCategory() {
         List<CategoryDto> categoryList = categoryService.getAllCategory();
         if(CollectionUtils.isEmpty(categoryList)){
@@ -50,8 +48,7 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/active")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @Override
     public ResponseEntity<?> getActiveCategory() {
         List<CategoryResponse> categoryList = categoryService.getActiveCategory();
         if(CollectionUtils.isEmpty(categoryList)){
@@ -63,10 +60,10 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
 
-    public ResponseEntity<?> getCategoryDetailById(@PathVariable("id") Integer id) throws ResourceNotfoundException {
+    @Override
+
+    public ResponseEntity<?> getCategoryDetailById(Integer id) throws ResourceNotfoundException {
         CategoryDto response = categoryService.getCategoryById(id);
         if(ObjectUtils.isEmpty(response)){
 //            return new ResponseEntity<>("Category not found with id "+id,HttpStatus.NOT_FOUND);
@@ -76,10 +73,10 @@ public class CategoryController {
         return CommonUtil.createBuildResponse(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
 
-    public ResponseEntity<?> DeleteCategoryById(@PathVariable("id") Integer id) {
+    @Override
+
+    public ResponseEntity<?> DeleteCategoryById(Integer id) {
         Boolean deleted = categoryService.deleteCategoryById(id);
         if(deleted){
 //            return new ResponseEntity<>(HttpStatus.OK);
